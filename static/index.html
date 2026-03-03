@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistica Casa Ferro</title>
+    <style>
+        :root {
+            --primary: #2a6df4;
+            --primary-dark: #1e54bf;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --muted: #6b7280;
+            --surface: #ffffff;
+            --bg: #f3f4f6;
+            --line: #e5e7eb;
+            --text: #111827;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 14px;
+            background:
+                radial-gradient(circle at top left, #eef2ff 0, transparent 32%),
+                radial-gradient(circle at top right, #ecfeff 0, transparent 28%),
+                var(--bg);
+            color: var(--text);
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        .app-header {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 3px 10px rgba(17, 24, 39, .06);
+            margin-bottom: 12px;
+        }
+        .title-wrap h1 { margin: 0; font-size: 20px; font-weight: 700; }
+        .title-wrap p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+        .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .canal-toggle {
+            display: inline-flex;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 4px;
+            gap: 4px;
+        }
+        .canal-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            background: transparent;
+            cursor: pointer;
+        }
+        .canal-btn.active { background: #fff; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 6px 18px rgba(17, 24, 39, .05);
+        }
+        h2, h3 { margin: 0 0 10px; letter-spacing: -.01em; }
+        .muted { color: var(--muted); font-size: 12px; }
+        label { font-size: 12px; color: #334155; font-weight: 600; margin-bottom: 4px; display: inline-block; }
+        textarea, input, select {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px 10px;
+            background: #fff;
+            transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+            color: #0f172a;
+        }
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+        }
+        textarea { min-height: 76px; }
+        #notasInput { min-height: 36px; max-height: 52px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform .08s ease, filter .15s ease, box-shadow .18s ease;
+            box-shadow: 0 2px 6px rgba(15,23,42,.12);
+        }
+        .btn:hover { filter: brightness(0.98); }
+        .btn:active { transform: translateY(1px); }
+        .btn-small { padding: 7px 9px; font-size: 11px; }
+        .btn-primary { background: var(--success); }
+        .btn-blue { background: var(--primary); }
+        .btn-gray { background: #64748b; }
+        .btn-warn { background: var(--warning); }
+        .btn-red { background: var(--danger); }
+        .btn-ghost {
+            background: #f8fafc;
+            color: #334155;
+            border: 1px solid #dbe3ef;
+            box-shadow: none;
+        }
+        .ok { color: #166534; font-weight: 600; }
+        .error { color: #b91c1c; font-weight: 600; }
+        .field-invalid { border-color: #dc2626 !important; background: #fff1f2; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; background: #eef2ff; color: #3730a3; font-size: 11px; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 860px; }
+        th, td { border: 1px solid #e5e7eb; padding: 8px; vertical-align: top; }
+        th { background: #f8fafc; text-align: left; font-weight: 700; color: #334155; }
+        tbody tr:nth-child(even) td { background: #fcfcfd; }
+        tr:hover td { background: #f8fafc; }
+        details { border: 1px solid var(--line); border-radius: 10px; padding: 8px; background: #fff; }
+        summary { cursor: pointer; font-weight: 700; }
+        .copy-icon-btn {
+            border: none;
+            background: transparent;
+            color: #64748b;
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            margin-left: 6px;
+            padding: 0;
+            cursor: pointer;
+            vertical-align: middle;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .copy-icon-btn:hover { background: #eef2f7; color: #475569; }
+        .copy-icon-svg { width: 14px; height: 14px; }
+        .hist-mobile { display: none; margin-top: 8px; }
+        .hist-card {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #fff;
+        }
+        .hist-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .hist-card-title { font-weight: 700; color: #1f2937; }
+        .hist-card-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 12px; }
+        .hist-card-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .hist-mobile-menu-wrap { position: relative; }
+        .hist-mobile-menu-btn {
+            border: 1px solid #dbe3ef;
+            background: #fff;
+            color: #334155;
+            border-radius: 8px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 24px;
+        }
+        .hist-mobile-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            z-index: 30;
+            min-width: 170px;
+            background: #fff;
+            border: 1px solid #dbe3ef;
+            border-radius: 10px;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, .14);
+            padding: 6px;
+            display: grid;
+            gap: 6px;
+        }
+        #partsWrap { overflow-x: visible; }
+        #partsTable { min-width: 0; table-layout: fixed; }
+        #partsTable th:nth-child(1), #partsTable td:nth-child(1) { width: 70px; }
+        #partsTable th:nth-child(2), #partsTable td:nth-child(2) { width: 130px; }
+        #partsTable th:nth-child(3), #partsTable td:nth-child(3) { width: 230px; }
+        #partsTable th:nth-child(4), #partsTable td:nth-child(4),
+        #partsTable th:nth-child(5), #partsTable td:nth-child(5),
+        #partsTable th:nth-child(6), #partsTable td:nth-child(6),
+        #partsTable th:nth-child(7), #partsTable td:nth-child(7) { width: 86px; }
+        #partsTable th:nth-child(8), #partsTable td:nth-child(8) { width: 220px; }
+        #partsTable .measure-input { max-width: 74px; padding: 7px 8px; }
+        #partsTable .quote-select { min-width: 200px; }
+        .preset-menu-wrap { position: relative; display: inline-block; width: 100%; }
+        .preset-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            width: 250px;
+            max-width: 90vw;
+            z-index: 20;
+            background: #fff;
+            border: 1px solid #dbe3ef;
+            border-radius: 10px;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, .14);
+            padding: 8px;
+        }
+        .preset-menu-actions { display: grid; gap: 6px; margin-top: 6px; }
+        .raw-wrap {
+            grid-column: 1 / -1;
+            background: #eef2ff;
+            border: 1px dashed #93c5fd;
+            border-radius: 10px;
+            padding: 8px;
+        }
+        .raw-wrap label { color: #1e3a8a; }
+        .hidden { display: none !important; }
+        .toast {
+            position: fixed;
+            right: 14px;
+            bottom: 14px;
+            z-index: 9999;
+            background: #1f2937;
+            color: #fff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 12px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all .2s ease;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.ok { background: #166534; }
+        .toast.warn { background: #92400e; }
+        .toast.err { background: #991b1b; }
+        .op-banner {
+            margin: 0 0 12px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 12px;
+        }
+        .op-banner.ok { background: #ecfdf5; border-color: #bbf7d0; color: #166534; }
+        .op-banner.err { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+        .op-banner.hidden { display: none !important; }
+        @media (max-width: 900px) {
+            .app-header { flex-direction: column; align-items: flex-start; }
+            .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+            .actions { flex-direction: column; }
+            .btn { width: 100%; }
+            .canal-toggle { width: 100%; }
+            .canal-btn { flex: 1; }
+            #histTableWrap { display: none; }
+            .hist-mobile { display: block; }
+            #partsWrap { overflow-x: auto; }
+            #partsTable { min-width: 860px; table-layout: auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="app-header">
+        <div class="title-wrap">
+            <h1>Casa Ferro Logistica</h1>
+            <p>Gestion de guias y envios</p>
+        </div>
+        <div class="header-actions">
+            <div class="canal-toggle" id="canalToggle">
+                <button type="button" class="canal-btn active" data-canal="skydropx">Nacional (Skydropx)</button>
+                <button type="button" class="canal-btn" data-canal="cflogistica">Guia CF Logistica</button>
+            </div>
+            <button id="diagBtnTop" class="btn btn-blue btn-small" onclick="diagnosticarSkydropx()">Diagnostico</button>
+        </div>
+    </header>
+    <div id="opBanner" class="op-banner hidden"></div>
+
+    <div class="section" id="captureSection">
+        <h2>Generar guias</h2>
+        <p class="muted">Pega una sola vez la fila de Sheets y genera todas las partes sin repetir captura.</p>
+        <label>Datos pegados de Sheets</label>
+        <textarea id="dataInput" placeholder="Pega aqui..."></textarea>
+        <div id="notasWrap">
+            <label style="margin-top:8px;display:block;">Notas para Guia CF Logistica (opcional)</label>
+            <textarea id="notasInput" placeholder="Ej: Entregar en recepcion"></textarea>
+        </div>
+        <div class="actions">
+            <button class="btn btn-red btn-small" onclick="anularUltimaGuia()">Anular ultima guia PDF</button>
+            <button id="cfDirectBtn" class="btn btn-primary btn-small hidden" onclick="generarCFDirecto()">Generar Guia CF Logistica</button>
+            <button class="btn btn-gray btn-small" onclick="limpiezaGeneral()">Limpieza general</button>
+        </div>
+    </div>
+
+    <div id="configSection" class="section">
+        <h3>Configuracion del pedido</h3>
+        <div class="grid-4">
+            <div><label>Pedido</label><input id="pedidoInput" placeholder="Ej: 51250"></div>
+            <div><label>Partes</label><input id="partesInput" type="number" min="1" value="1"></div>
+            <div>
+                <label>Canal</label>
+                <select id="canalSelect" class="hidden">
+                    <option value="skydropx">Skydropx (nacional)</option>
+                    <option value="cflogistica">Guia CF Logistica</option>
+                </select>
+                <input value="Se controla desde selector superior" disabled>
+            </div>
+            <div><label>Producto</label><input value="56101500 | Muebles" disabled></div>
+        </div>
+        <div class="actions">
+            <button class="btn btn-primary btn-small" onclick="crearPartes()">Crear/actualizar partes</button>
+            <button class="btn btn-gray btn-small" onclick="autollenarPedidoDesdeRaw()">Autollenar pedido</button>
+        </div>
+        <div id="diagSkydropxOut" class="muted" style="margin-top:6px;"></div>
+        <div id="opStatus" class="muted" style="margin-top:4px;"></div>
+    </div>
+
+    <div class="section" id="precheckSection">
+        <h3>Verificacion de direccion (Skydropx)</h3>
+        <p class="muted">Solo aplica para canal Skydropx.</p>
+        <div class="grid-2">
+            <div class="raw-wrap"><label>Direccion completa pegada (RAW)</label><input id="pvStreetRaw"></div>
+            <div><label>Calle principal para guia (street1, max 45)</label><input id="pvStreet1"></div>
+            <div><label>reference</label><input id="pvReference"></div>
+            <div><label>Codigo postal</label><input id="pvPostal"></div>
+            <div><label>Telefono</label><input id="pvPhone"></div>
+            <div><label>Estado</label><input id="pvState"></div>
+            <div><label>Ciudad</label><input id="pvCity"></div>
+            <div><label>Colonia</label><input id="pvColony"></div>
+            <div><label>Nombre</label><input id="pvName"></div>
+            <div><label>Email</label><input id="pvEmail"></div>
+        </div>
+        <div class="actions">
+            <button class="btn btn-blue btn-small" onclick="prevalidarSkydropx({silent:false})">Revalidar direccion</button>
+            <button class="btn btn-gray btn-small" onclick="limpiarVerificador()">Limpiar verificador</button>
+            <span id="precheckStatus" class="muted">Pendiente de validar.</span>
+        </div>
+    </div>
+
+    <div id="partsSection" class="section">
+        <h3>Paquetes por envio</h3>
+        <p class="muted">Gestiona presets por cada parte para evitar saturación y mantener medidas distintas por paquete.</p>
+        <div class="table-wrap" id="partsWrap">
+        <table id="partsTable">
+            <thead>
+            <tr>
+                <th>Parte</th>
+                <th>Paquete</th>
+                <th>Acciones del paquete</th>
+                <th>Peso</th>
+                <th>Largo</th>
+                <th>Ancho</th>
+                <th>Alto</th>
+                <th class="quote-col">Cotizacion</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="partsBody"></tbody>
+        </table>
+        </div>
+        <div class="actions">
+            <button class="btn btn-primary btn-small" onclick="generarTodasPartes()">Generar todas las partes</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Historial de guias (2 meses)</h3>
+        <details>
+            <summary>Mostrar historial</summary>
+            <div class="grid-3" style="margin-top:10px;">
+                <input id="histPedidoFiltro" placeholder="Buscar por pedido">
+                <select id="histEstadoFiltro">
+                    <option value="activos" selected>Activas (sin archivadas)</option>
+                    <option value="">Todos los estados</option>
+                    <option>Generada</option>
+                    <option>Enviada a almacen</option>
+                    <option>Reimpresa</option>
+                    <option>Archivada</option>
+                    <option>Cancelacion solicitada</option>
+                    <option>Cancelada</option>
+                    <option>Cancelacion negada</option>
+                </select>
+                <button class="btn btn-gray btn-small" onclick="cargarHistorial()">Actualizar historial</button>
+            </div>
+            <div class="actions">
+                <button class="btn btn-blue btn-small" onclick="descargarSeleccionadas()">Descargar seleccionadas</button>
+            </div>
+            <div class="table-wrap" id="histTableWrap">
+            <table>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="chkAllHist"></th>
+                    <th>Pedido</th>
+                    <th>Parte</th>
+                    <th>Canal</th>
+                    <th>Estado</th>
+                    <th>Archivo</th>
+                    <th>Rastreo</th>
+                    <th>Costo</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="histBody"></tbody>
+            </table>
+            </div>
+            <div id="histMobile" class="hist-mobile"></div>
+        </details>
+    </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+    const PRESET_STORAGE_KEY = "skydropx_package_presets_v1";
+    const PRESET_MAX_ITEMS = 100;
+    const DEFAULT_PRESETS = [
+        { id: "comedor6eco", name: "COMEDOR6ECO", weight_kg: 34, length_cm: 101, width_cm: 18, height_cm: 165 },
+        { id: "comedor4eco", name: "COMEDOR4ECO", weight_kg: 23, length_cm: 98, width_cm: 25, height_cm: 104 },
+        { id: "sillas4", name: "+ 4 SILLAS", weight_kg: 18, length_cm: 48, width_cm: 48, height_cm: 56 },
+        { id: "sillas6", name: "+ 6 SILLAS", weight_kg: 25, length_cm: 55, width_cm: 40, height_cm: 55 },
+        { id: "sillas8", name: "+ 8 SILLAS", weight_kg: 37, length_cm: 55, width_cm: 47, height_cm: 68 },
+        { id: "litera_slim_ind", name: "LITERA SLIM/ESTAMBUL IND", weight_kg: 43, length_cm: 108, width_cm: 25, height_cm: 195 },
+        { id: "librero_desarmado", name: "LIBRERO (DESARMADO)", weight_kg: 45, length_cm: 30, width_cm: 28, height_cm: 187 },
+        { id: "colchon_tight", name: "COLCHON TIGHT TOP IND", weight_kg: 14, length_cm: 107, width_cm: 23, height_cm: 192 },
+        { id: "litera_ind_p1", name: "LITERA IND (PARTE 1)", weight_kg: 35, length_cm: 112, width_cm: 18, height_cm: 178 },
+        { id: "litera_ind_p2", name: "LITERA IND (PARTE 2)", weight_kg: 32, length_cm: 64, width_cm: 12, height_cm: 198 },
+        { id: "litera_ind_p3", name: "LITERA IND (PARTE 3)", weight_kg: 36, length_cm: 32, width_cm: 22, height_cm: 104 },
+        { id: "litera_escr_p4", name: "LITERA ESCRITORIO (PARTE 4)", weight_kg: 15, length_cm: 62, width_cm: 24, height_cm: 120 },
+        { id: "litera_mat_p1", name: "LITERA MATRIMONIAL (PARTE 1)", weight_kg: 52, length_cm: 148, width_cm: 16, height_cm: 178 },
+        { id: "litera_mat_p2", name: "LITERA MATRIMONIAL (PARTE 2)", weight_kg: 29, length_cm: 43, width_cm: 10, height_cm: 200 },
+        { id: "litera_mat_p3", name: "LITERA MATRIMONIAL (PARTE 3)", weight_kg: 48, length_cm: 34, width_cm: 22, height_cm: 144 },
+        { id: "mesa_parota", name: "MESA PAROTA", weight_kg: 40, length_cm: 94, width_cm: 20, height_cm: 205 },
+        { id: "banca_150", name: "BANCA 1.50", weight_kg: 15, length_cm: 40, width_cm: 16, height_cm: 160 }
+    ];
+
+    let precheckData = null;
+    let partsData = [];
+    let historialRows = [];
+    let prevalidarTimer = null;
+    let lastRawSnapshot = "";
+    const COPY_ICON = `
+        <svg class="copy-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="9" y="3" width="12" height="16" rx="2"></rect>
+            <path d="M5 15V7a2 2 0 0 1 2-2h8"></path>
+        </svg>
+    `;
+
+    function $(id) { return document.getElementById(id); }
+    function normalizeCanal(canal) {
+        const key = String(canal || "").trim().toLowerCase();
+        if (key === "pdf_privado" || key === "cflogistica") return "cflogistica";
+        return key || "-";
+    }
+    function isCFCanal(canal) {
+        return normalizeCanal(canal) === "cflogistica";
+    }
+    function setOpStatus(msg, type = "") {
+        const el = $("opStatus");
+        const banner = $("opBanner");
+        if (!el) return;
+        const cls = type === "err" ? "error" : type === "ok" ? "ok" : "muted";
+        el.className = cls;
+        el.textContent = msg || "";
+        if (banner) {
+            banner.textContent = msg || "";
+            banner.className = `op-banner ${type}`.trim();
+            if (!msg) banner.classList.add("hidden");
+        }
+    }
+    function toast(msg, type = "") {
+        const t = $("toast");
+        t.textContent = msg;
+        t.className = `toast show ${type}`.trim();
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => { t.className = "toast"; }, 2200);
+    }
+
+    function getPresets() {
+        try {
+            const raw = localStorage.getItem(PRESET_STORAGE_KEY);
+            if (!raw) return [];
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            return [];
+        }
+    }
+    function savePresets(list) { localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(list)); }
+    function ensureDefaultPresets() { if (getPresets().length === 0) savePresets(DEFAULT_PRESETS); }
+
+    function renderPresetOptions() {
+        const targets = [];
+        const list = getPresets();
+        targets.forEach((id) => {
+            const sel = $(id);
+            if (!sel) return;
+            const current = sel.value;
+            sel.innerHTML = `<option value="">Paquetes frecuentes (${list.length}/${PRESET_MAX_ITEMS})</option>`;
+            list.forEach((p) => {
+                const o = document.createElement("option");
+                o.value = p.id;
+                o.textContent = `${p.name} - ${p.weight_kg}kg | ${p.length_cm}x${p.width_cm}x${p.height_cm}`;
+                sel.appendChild(o);
+            });
+            if (current) sel.value = current;
+        });
+    }
+
+    function savePresetFromMeasures(name, measures, updateId = null) {
+        const cleanName = String(name || "").trim();
+        if (!cleanName) return toast("Escribe un nombre de preset", "warn");
+        const list = getPresets();
+        if (!updateId && list.length >= PRESET_MAX_ITEMS) return toast("Llegaste al maximo de paquetes", "warn");
+        const exists = list.some((x) => x.name.toLowerCase() === cleanName.toLowerCase() && x.id !== updateId);
+        if (exists) return toast("Ya existe ese nombre", "warn");
+        if (updateId) {
+            const idx = list.findIndex((x) => x.id === updateId);
+            if (idx < 0) return toast("No se encontro preset para actualizar", "warn");
+            list[idx] = { ...list[idx], name: cleanName, ...measures };
+        } else {
+            const id = "preset_" + Date.now();
+            list.push({ id, name: cleanName, ...measures });
+        }
+        savePresets(list);
+        renderPresetOptions();
+        renderParts();
+        toast("Preset guardado", "ok");
+    }
+
+    function partFilename(pedido, parte, totalPartes = 1) {
+        if (!pedido) return null;
+        const p = Number(parte || 1);
+        const total = Math.max(1, Number(totalPartes || 1));
+        return (total <= 1 && p <= 1) ? `${pedido}.pdf` : `${pedido} PARTE ${p}.pdf`;
+    }
+
+    function fillPrecheckForm(data) {
+        $("pvStreetRaw").value = data.street_raw || "";
+        $("pvStreet1").value = data.street1 || "";
+        $("pvReference").value = data.reference || "";
+        $("pvPostal").value = data.postal_code || "";
+        $("pvPhone").value = data.phone || "";
+        $("pvState").value = data.state || "";
+        $("pvCity").value = data.city || "";
+        $("pvColony").value = data.colony || "";
+        $("pvName").value = data.name || "";
+        $("pvEmail").value = data.email || "";
+    }
+
+    function resetPrecheckStatus(msg = 'Pendiente de validar.') {
+        precheckData = null;
+        $("precheckStatus").innerHTML = `<span class="muted">${msg}</span>`;
+        ["pvStreet1","pvReference","pvPostal","pvPhone","pvState","pvCity","pvColony"].forEach((id) => {
+            $(id).classList.remove("field-invalid");
+        });
+    }
+
+    function clearPrecheckForm(msg = "Verificador limpiado.") {
+        ["pvStreetRaw","pvStreet1","pvReference","pvPostal","pvPhone","pvState","pvCity","pvColony","pvName","pvEmail"].forEach((id) => {
+            $(id).value = "";
+        });
+        resetPrecheckStatus(msg);
+    }
+
+    function clearPrecheckOverridesForNewRaw() {
+        ["pvStreetRaw","pvStreet1","pvReference","pvPostal","pvPhone","pvState","pvCity","pvColony","pvName","pvEmail"].forEach((id) => {
+            $(id).value = "";
+        });
+        resetPrecheckStatus("Nueva dirección detectada. Revalidando...");
+    }
+
+    function readPrecheckOverride() {
+        const raw = {
+            street_raw: $("pvStreetRaw").value,
+            street1: $("pvStreet1").value,
+            reference: $("pvReference").value,
+            postal_code: $("pvPostal").value,
+            phone: $("pvPhone").value,
+            state: $("pvState").value,
+            city: $("pvCity").value,
+            colony: $("pvColony").value,
+            name: $("pvName").value,
+            email: $("pvEmail").value,
+        };
+        const out = {};
+        Object.keys(raw).forEach((k) => {
+            const v = String(raw[k] || "").trim();
+            if (v) out[k] = v;
+        });
+        return out;
+    }
+
+    function applyPrecheckErrors(pre) {
+        const map = {
+            street1: "pvStreet1",
+            reference: "pvReference",
+            postal_code: "pvPostal",
+            phone: "pvPhone",
+            state: "pvState",
+            city: "pvCity",
+            colony: "pvColony"
+        };
+        Object.values(map).forEach((id) => $(id).classList.remove("field-invalid"));
+        Object.keys(pre.errors || {}).forEach((key) => {
+            const id = map[key];
+            if (id) $(id).classList.add("field-invalid");
+        });
+    }
+
+    async function prevalidarSkydropx(opts = { silent: false }) {
+        const raw = $("dataInput").value.trim();
+        if (!raw) {
+            if (!opts.silent) toast("Pega los datos de Sheets primero", "warn");
+            $("precheckStatus").innerHTML = '<span class="muted">Pendiente de validar.</span>';
+            return false;
+        }
+        const body = { raw_text: raw, address_override: readPrecheckOverride() };
+        const r = await fetch("/prevalidar-skydropx", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+            if (!opts.silent) toast(data.detail || "Error al prevalidar", "err");
+            $("precheckStatus").innerHTML = '<span class="error">No se pudo autollenar/prevalidar.</span>';
+            return false;
+        }
+        precheckData = data;
+        fillPrecheckForm(data);
+        applyPrecheckErrors(data);
+        $("precheckStatus").innerHTML = data.valid
+            ? '<span class="ok">Direccion valida</span>'
+            : '<span class="error">Direccion invalida. Corrige campos en rojo.</span>';
+        if (!opts.silent) toast(data.valid ? "Direccion valida" : "Direccion invalida", data.valid ? "ok" : "warn");
+        return data.valid;
+    }
+
+    function presetSelectHtml(partIdx) {
+        const list = getPresets();
+        let html = `<select data-part="${partIdx}" class="part-preset"><option value="">Preset</option>`;
+        list.forEach((p) => {
+            const selected = partsData[partIdx]?.preset_id === p.id ? "selected" : "";
+            html += `<option value="${p.id}" ${selected}>${p.name}</option>`;
+        });
+        html += "</select>";
+        return html;
+    }
+
+    function inferPedidoFromRaw(raw) {
+        const text = String(raw || "").trim();
+        if (!text) return "";
+        const firstLine = text.split(/\r?\n/)[0] || "";
+        const byTabs = firstLine.split("\t").map((x) => x.trim()).filter(Boolean);
+        if (byTabs.length >= 5) {
+            const candidate = byTabs[4];
+            if (candidate) return candidate;
+        }
+        const allCells = text.replace(/\r?\n/g, "\t").split("\t").map((x) => x.trim()).filter(Boolean);
+        if (allCells.length >= 5 && allCells[4]) return allCells[4];
+        return "";
+    }
+
+    function inferPedidosFromRaw(raw) {
+        const text = String(raw || "").trim();
+        if (!text) return [];
+        const set = new Set();
+        text.split(/\r?\n/).forEach((line) => {
+            const cols = String(line || "").split("\t").map((x) => x.trim());
+            if (cols.length >= 5 && cols[4]) set.add(cols[4]);
+        });
+        if (set.size > 0) return Array.from(set);
+        const allCells = text.replace(/\r?\n/g, "\t").split("\t").map((x) => x.trim());
+        if (allCells.length >= 5 && allCells[4]) return [allCells[4]];
+        return [];
+    }
+
+    function autollenarPedidoDesdeRaw() {
+        const current = $("pedidoInput").value.trim();
+        if (current) return current;
+        const inferred = inferPedidoFromRaw($("dataInput").value);
+        if (inferred) {
+            $("pedidoInput").value = inferred;
+            return inferred;
+        }
+        toast("No pude detectar pedido automáticamente. Captúralo manual.", "warn");
+        return "";
+    }
+
+    function getDefaultMeasures() {
+        return { weight_kg: 1, length_cm: 20, width_cm: 15, height_cm: 10, preset_id: "" };
+    }
+
+    function syncPartsCount(keepExisting = true) {
+        if (!$("pedidoInput").value.trim()) autollenarPedidoDesdeRaw();
+        const n = Math.max(1, Number($("partesInput").value || 1));
+        const next = [];
+        const defaults = getDefaultMeasures();
+        for (let i = 1; i <= n; i += 1) {
+            const prev = keepExisting ? partsData.find((x) => x.parte === i) : null;
+            next.push(prev || {
+                parte: i,
+                weight_kg: defaults.weight_kg,
+                length_cm: defaults.length_cm,
+                width_cm: defaults.width_cm,
+                height_cm: defaults.height_cm,
+                preset_id: defaults.preset_id,
+                rates: [],
+                rate_id: "",
+            });
+        }
+        partsData = next;
+    }
+
+    function crearPartes() {
+        syncPartsCount(false);
+        renderParts();
+        if ($("canalSelect").value === "skydropx") {
+            prevalidarSkydropx({ silent: true });
+        }
+    }
+
+    function renderParts() {
+        const body = $("partsBody");
+        body.innerHTML = "";
+        partsData.forEach((p, idx) => {
+            const tr = document.createElement("tr");
+            const canal = $("canalSelect").value;
+            tr.innerHTML = `
+                <td><strong>Parte ${p.parte}</strong></td>
+                <td>${presetSelectHtml(idx)}</td>
+                <td>
+                    <div class="preset-menu-wrap">
+                        <button class="btn btn-ghost btn-small" onclick="togglePresetMenu(${idx}, event)">Paquete ▾</button>
+                        <div id="presetMenu-${idx}" class="preset-menu hidden" onclick="event.stopPropagation()">
+                            <input id="presetName-${idx}" placeholder="Nombre preset (ej. MESA RESTAURANT)">
+                            <div class="preset-menu-actions">
+                                <button class="btn btn-gray btn-small" onclick="guardarPresetDesdeParte(${idx});closePresetMenus();">Guardar nuevo</button>
+                                <button class="btn btn-warn btn-small" onclick="actualizarPresetDesdeParte(${idx});closePresetMenus();">Actualizar actual</button>
+                                <button class="btn btn-red btn-small" onclick="eliminarPresetDesdeParte(${idx});closePresetMenus();">Eliminar actual</button>
+                            </div>
+                        </div>
+                    </div>
+                    ${idx > 0 ? `<button class="btn btn-blue btn-small" onclick="duplicarParteAnterior(${idx})">Duplicar ant.</button>` : ""}
+                </td>
+                <td><input class="measure-input" type="number" step="0.1" min="0.1" value="${p.weight_kg}" data-k="weight_kg" data-i="${idx}"></td>
+                <td><input class="measure-input" type="number" min="1" value="${p.length_cm}" data-k="length_cm" data-i="${idx}"></td>
+                <td><input class="measure-input" type="number" min="1" value="${p.width_cm}" data-k="width_cm" data-i="${idx}"></td>
+                <td><input class="measure-input" type="number" min="1" value="${p.height_cm}" data-k="height_cm" data-i="${idx}"></td>
+                <td class="quote-col">${canal === "skydropx" ? `<select class="quote-select" id="rates-${idx}"><option value="">Sin cotizar</option></select>` : ``}</td>
+                <td>
+                    ${canal === "skydropx" ? `<button class="btn btn-blue btn-small" onclick="cotizarParte(${idx})">Cotizar</button>` : ""}
+                    <button class="btn btn-primary btn-small" onclick="generarParte(${idx})">Generar guia</button>
+                </td>
+            `;
+            body.appendChild(tr);
+        });
+
+        body.querySelectorAll("input[data-k]").forEach((inp) => {
+            inp.addEventListener("change", (e) => {
+                const i = Number(e.target.getAttribute("data-i"));
+                const k = e.target.getAttribute("data-k");
+                partsData[i][k] = Number(e.target.value || 0);
+            });
+        });
+        body.querySelectorAll(".part-preset").forEach((sel) => {
+            sel.addEventListener("change", (e) => {
+                const idx = Number(e.target.getAttribute("data-part"));
+                const p = getPresets().find((x) => x.id === e.target.value);
+                if (!p) return;
+                partsData[idx].preset_id = p.id;
+                partsData[idx].weight_kg = p.weight_kg;
+                partsData[idx].length_cm = p.length_cm;
+                partsData[idx].width_cm = p.width_cm;
+                partsData[idx].height_cm = p.height_cm;
+                renderParts();
+            });
+        });
+    }
+
+    function getMeasuresFromPart(idx) {
+        const p = partsData[idx];
+        return {
+            weight_kg: Number(p.weight_kg || 1),
+            length_cm: Number(p.length_cm || 20),
+            width_cm: Number(p.width_cm || 15),
+            height_cm: Number(p.height_cm || 10),
+        };
+    }
+
+    function guardarPresetDesdeParte(idx) {
+        const typed = $("presetName-" + idx)?.value?.trim() || "";
+        const name = typed || prompt("Nombre del preset para Parte " + partsData[idx].parte + ":");
+        if (!name) return;
+        savePresetFromMeasures(name, getMeasuresFromPart(idx));
+    }
+
+    function actualizarPresetDesdeParte(idx) {
+        const id = partsData[idx].preset_id;
+        if (!id) return toast("Selecciona primero un preset en la fila", "warn");
+        const current = getPresets().find((x) => x.id === id);
+        const typed = $("presetName-" + idx)?.value?.trim() || "";
+        const name = typed || prompt("Nombre del preset:", current?.name || "");
+        if (!name) return;
+        savePresetFromMeasures(name, getMeasuresFromPart(idx), id);
+    }
+
+    function eliminarPresetDesdeParte(idx) {
+        const id = partsData[idx].preset_id;
+        if (!id) return toast("Selecciona primero un preset en la fila", "warn");
+        const p = getPresets().find((x) => x.id === id);
+        if (!p) return;
+        if (!confirm(`Eliminar preset "${p.name}"?`)) return;
+        savePresets(getPresets().filter((x) => x.id !== id));
+        partsData.forEach((x) => { if (x.preset_id === id) x.preset_id = ""; });
+        renderPresetOptions();
+        renderParts();
+        toast("Preset eliminado", "ok");
+    }
+
+    function closePresetMenus() {
+        document.querySelectorAll("[id^='presetMenu-']").forEach((el) => el.classList.add("hidden"));
+    }
+
+    function togglePresetMenu(idx, ev) {
+        if (ev) ev.stopPropagation();
+        const menu = $("presetMenu-" + idx);
+        if (!menu) return;
+        const willOpen = menu.classList.contains("hidden");
+        closePresetMenus();
+        if (willOpen) menu.classList.remove("hidden");
+    }
+
+    function closeHistMenus() {
+        document.querySelectorAll("[id^='histMenu-']").forEach((el) => el.classList.add("hidden"));
+    }
+
+    function toggleHistMenu(id, ev) {
+        if (ev) ev.stopPropagation();
+        const menu = $("histMenu-" + id);
+        if (!menu) return;
+        const willOpen = menu.classList.contains("hidden");
+        closeHistMenus();
+        if (willOpen) menu.classList.remove("hidden");
+    }
+
+    function ejecutarAccionPreset(idx) {
+        const action = $("presetAction-" + idx)?.value || "";
+        if (!action) return toast("Selecciona una acción de preset", "warn");
+        if (action === "save") return guardarPresetDesdeParte(idx);
+        if (action === "update") return actualizarPresetDesdeParte(idx);
+        if (action === "delete") return eliminarPresetDesdeParte(idx);
+    }
+
+    function duplicarParteAnterior(idx) {
+        if (idx <= 0) return;
+        const prev = partsData[idx - 1];
+        partsData[idx] = { ...partsData[idx], ...getMeasuresFromPart(idx - 1), preset_id: prev.preset_id || "", rates: [], rate_id: "" };
+        renderParts();
+    }
+
+    async function cotizarParte(idx) {
+        const raw = $("dataInput").value.trim();
+        if (!raw) return toast("Pega los datos primero", "warn");
+        setOpStatus(`Cotizando parte ${partsData[idx].parte}...`);
+        toast(`Solicitud de cotización enviada (parte ${partsData[idx].parte})`, "warn");
+        const part = partsData[idx];
+        const r = await fetch("/cotizar-envio", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                raw_text: raw,
+                weight_kg: part.weight_kg,
+                length_cm: part.length_cm,
+                width_cm: part.width_cm,
+                height_cm: part.height_cm
+            })
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+            setOpStatus("Error al cotizar.", "err");
+            return toast(data.detail || "Error al cotizar", "err");
+        }
+        const rates = (data.opciones || []).slice().sort((a, b) => {
+            const toNumber = (v) => Number(String(v ?? "0").replace(/[^0-9.-]/g, "")) || 0;
+            return toNumber(a.total) - toNumber(b.total);
+        });
+        partsData[idx].rates = rates;
+        const sel = $("rates-" + idx);
+        sel.innerHTML = `<option value="">Selecciona tarifa</option>`;
+        rates.forEach((x) => {
+            const opt = document.createElement("option");
+            opt.value = x.id;
+            opt.textContent = `${x.carrier} | ${x.service} | ${x.currency} $${x.total} | ${x.days || "-"} dias`;
+            sel.appendChild(opt);
+        });
+        sel.addEventListener("change", (e) => { partsData[idx].rate_id = e.target.value; });
+        setOpStatus(`Cotización lista para parte ${partsData[idx].parte}.`, "ok");
+        toast(`Cotización completada (parte ${partsData[idx].parte})`, "ok");
+    }
+
+    async function generarParte(idx, confirmDup = false) {
+        const canal = $("canalSelect").value;
+        const raw = $("dataInput").value.trim();
+        const pedido = $("pedidoInput").value.trim();
+        const totalPartes = Math.max(1, Number($("partesInput").value || 1));
+        if (!raw) return toast("Pega los datos primero", "warn");
+        if (!pedido) return toast("Captura el numero de pedido", "warn");
+        const parte = partsData[idx].parte;
+        setOpStatus(`Enviando solicitud de guía para parte ${parte}...`);
+        toast(`Solicitud de guía enviada (parte ${parte})`, "warn");
+
+        if (canal === "cflogistica") {
+            const r = await fetch("/generar-pdf", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    raw_text: raw,
+                    notas: $("notasInput").value.trim() || null,
+                    pedido: pedido,
+                    parte: parte,
+                    total_partes: totalPartes,
+                    confirmar_duplicado: !!confirmDup
+                })
+            });
+            if (r.status === 409) {
+                const err = await r.json().catch(() => ({}));
+                const d = String(err.detail || "");
+                if (d.startsWith("duplicado|")) {
+                    if (confirm("Ya existe una guia para este pedido/parte en historial. Continuar de todos modos?")) {
+                        return generarParte(idx, true);
+                    }
+                    return;
+                }
+            }
+            if (!r.ok) {
+                const err = await r.json().catch(() => ({}));
+                setOpStatus(`Error al generar PDF de parte ${parte}.`, "err");
+                return toast(err.detail || "Error al generar PDF", "err");
+            }
+            const blob = await r.blob();
+            const fileName = r.headers.get("X-Filename") || partFilename(pedido, parte, totalPartes) || "guia.pdf";
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setOpStatus(`Guía PDF generada para parte ${parte}.`, "ok");
+            toast("PDF generado", "ok");
+            await cargarHistorial();
+            return;
+        }
+
+        if (!precheckData || !precheckData.valid) {
+            const ok = await prevalidarSkydropx();
+            if (!ok) return toast("Corrige la direccion antes de generar", "warn");
+        }
+        const rateId = partsData[idx].rate_id || (($("rates-" + idx) || {}).value || "");
+        if (!rateId) return toast("Primero cotiza y selecciona tarifa para parte " + parte, "warn");
+
+        const r = await fetch("/crear-envio-skydropx", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                raw_text: raw,
+                rate_id: rateId,
+                pedido: pedido,
+                parte: parte,
+                total_partes: totalPartes,
+                confirmar_duplicado: !!confirmDup,
+                address_override: readPrecheckOverride()
+            })
+        });
+        const data = await r.json().catch(() => ({}));
+        if (r.status === 409 && String(data.detail || "").startsWith("duplicado|")) {
+            if (confirm("Ya existe guia para ese pedido/parte en historial. Continuar de todos modos?")) {
+                return generarParte(idx, true);
+            }
+            return;
+        }
+        if (!r.ok) {
+            if (r.status === 422 && data.detail && data.detail.precheck) {
+                precheckData = data.detail.precheck;
+                fillPrecheckForm(precheckData);
+                applyPrecheckErrors(precheckData);
+                $("precheckStatus").innerHTML = '<span class="error">Prevalidacion fallida en backend.</span>';
+            }
+            setOpStatus(`Error al crear envío de parte ${parte}.`, "err");
+            return toast((data.detail && (data.detail.mensaje || data.detail)) || "Error al crear envio", "err");
+        }
+        const labelUrl = data.label_url || (data.label || {}).url || (((data.labels || [])[0] || {}).url);
+        const outName = data.filename_sugerido || partFilename(pedido, parte, totalPartes) || "guia-skydropx.pdf";
+        if (labelUrl) {
+            const q = new URLSearchParams({ url: String(labelUrl), filename: String(outName) });
+            window.open("/descargar-label-skydropx?" + q.toString(), "_blank");
+        } else {
+            toast("Guía creada, pero la etiqueta aún no está lista para descargar. Revisa historial en unos segundos.", "warn");
+        }
+        setOpStatus(`Guía Skydropx generada para parte ${parte}.`, "ok");
+        toast("Guía Skydropx generada", "ok");
+        await cargarHistorial();
+    }
+
+    async function generarTodasPartes() {
+        setOpStatus("Generando todas las partes, por favor espera...");
+        for (let i = 0; i < partsData.length; i += 1) {
+            await generarParte(i);
+        }
+        setOpStatus("Proceso completado para todas las partes.", "ok");
+    }
+
+    async function generarCFDirecto(confirmDup = false) {
+        const raw = $("dataInput").value.trim();
+        if (!raw) return toast("Pega los datos primero", "warn");
+        const pedidos = inferPedidosFromRaw(raw);
+        const pedido = pedidos.length === 1 ? (pedidos[0] || $("pedidoInput").value.trim() || null) : null;
+        setOpStatus("Generando Guia CF Logistica...");
+        const r = await fetch("/generar-pdf", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                raw_text: raw,
+                notas: $("notasInput").value.trim() || null,
+                pedido: pedido,
+                parte: 1,
+                total_partes: 1,
+                confirmar_duplicado: !!confirmDup
+            })
+        });
+        if (r.status === 409) {
+            const err = await r.json().catch(() => ({}));
+            const d = String(err.detail || "");
+            if (d.startsWith("duplicado|")) {
+                if (confirm("Ya existe guía de este pedido en historial. ¿Continuar?")) {
+                    return generarCFDirecto(true);
+                }
+                return;
+            }
+        }
+        if (!r.ok) {
+            const err = await r.json().catch(() => ({}));
+            setOpStatus("Error al generar Guia CF Logistica.", "err");
+            return toast(err.detail || "Error al generar PDF", "err");
+        }
+        const blob = await r.blob();
+        const fileName = r.headers.get("X-Filename") || (pedido ? `${pedido}.pdf` : "guia-cf-logistica.pdf");
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setOpStatus("Guia CF Logistica generada.", "ok");
+        toast("PDF generado", "ok");
+        await cargarHistorial();
+    }
+
+    async function anularUltimaGuia() {
+        if (!confirm("Anular la ultima guia PDF?")) return;
+        const r = await fetch("/anular-ultima-guia", { method: "POST" });
+        const data = await r.json().catch(() => ({}));
+        toast(data.mensaje || (r.ok ? "Listo" : "Error"), r.ok ? "ok" : "err");
+    }
+
+    async function diagnosticarSkydropx() {
+        const r = await fetch("/diagnostico-skydropx");
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+            toast(data.detail || "Error en diagnóstico", "err");
+            return;
+        }
+        const oauth = data.oauth_client_credentials || {};
+        const bearer = data.bearer_token || {};
+        $("diagSkydropxOut").textContent =
+            `Base: ${data.base_url || "-"} | OAuth: ${oauth.status || "-"} | Bearer: ${bearer.status || "-"} | Modo sugerido: ${data.modo_sugerido || "-"}`;
+        if (oauth.ok) toast("OAuth OK", "ok");
+        else if (bearer.configured) toast("OAuth no válido, usando Bearer fallback", "warn");
+        else toast("Sin credenciales válidas en Skydropx", "err");
+    }
+
+    async function cargarHistorial() {
+        const pedido = $("histPedidoFiltro").value.trim();
+        const estado = $("histEstadoFiltro").value;
+        const q = new URLSearchParams();
+        if (pedido) q.set("pedido", pedido);
+        if (estado && estado !== "activos") q.set("estado", estado);
+        const r = await fetch("/historial-guias?" + q.toString());
+        const data = await r.json().catch(() => ({}));
+        historialRows = (data.rows || []).filter((row) => {
+            if (estado === "activos") return String(row.estado || "") !== "Archivada";
+            return true;
+        });
+        renderHistorial();
+    }
+
+    function renderHistorial() {
+        const body = $("histBody");
+        const mobile = $("histMobile");
+        body.innerHTML = "";
+        mobile.innerHTML = "";
+        historialRows.forEach((row) => {
+            const tr = document.createElement("tr");
+            const canalKey = normalizeCanal(row.canal);
+            const canalText = canalKey === "cflogistica" ? "cflogistica" : canalKey;
+            const isClosed = ["Archivada", "Cancelada", "Cancelacion negada"].includes(String(row.estado || ""));
+            const costoFmt = row.costo_total != null && row.costo_total !== "" ? `MXN $${Number(row.costo_total).toFixed(2)}` : "-";
+            tr.innerHTML = `
+                <td><input type="checkbox" data-row-id="${row.id}" class="hist-chk"></td>
+                <td>${row.pedido || "-"}</td>
+                <td>${row.parte || 1}</td>
+                <td>${canalText}</td>
+                <td>
+                    <select data-status-id="${row.id}" ${isClosed ? "disabled" : ""}>
+                        <option ${row.estado === "Generada" ? "selected" : ""}>Generada</option>
+                        <option ${row.estado === "Enviada a almacen" ? "selected" : ""}>Enviada a almacen</option>
+                        <option ${row.estado === "Reimpresa" ? "selected" : ""}>Reimpresa</option>
+                        <option ${row.estado === "Archivada" ? "selected" : ""}>Archivada</option>
+                        <option ${row.estado === "Cancelacion solicitada" ? "selected" : ""}>Cancelacion solicitada</option>
+                        <option ${row.estado === "Cancelada" ? "selected" : ""}>Cancelada</option>
+                        <option ${row.estado === "Cancelacion negada" ? "selected" : ""}>Cancelacion negada</option>
+                    </select>
+                </td>
+                <td>${row.archivo_nombre || "-"}</td>
+                <td>
+                    ${row.tracking_number || "-"}
+                    ${row.tracking_number ? `<button class="copy-icon-btn" title="Copiar rastreo" aria-label="Copiar rastreo" data-copy-track-id="${row.id}">${COPY_ICON}</button>` : ""}
+                </td>
+                <td>
+                    ${costoFmt}
+                    ${(row.tracking_number && row.costo_total != null && row.costo_total !== "")
+                        ? `<button class="copy-icon-btn" title="Copiar rastreo + costo (2 celdas)" aria-label="Copiar rastreo y costo" data-copy-track-cost-id="${row.id}">${COPY_ICON}</button>`
+                        : ""}
+                </td>
+                <td>${(row.created_at || "").replace("T", " ").slice(0, 16)}</td>
+                <td>
+                    <button class="btn btn-gray btn-small" data-download-id="${row.id}">Descargar</button>
+                    ${!isClosed && canalKey === "skydropx"
+                        ? `<button class="btn btn-warn btn-small" data-cancel-id="${row.id}">Cancelar guía</button>`
+                        : ""}
+                    ${!isClosed ? `<button class="btn btn-blue btn-small" data-archive-id="${row.id}">Archivar</button>` : ""}
+                    <button class="btn btn-red btn-small" data-delete-id="${row.id}">Eliminar</button>
+                </td>
+            `;
+            body.appendChild(tr);
+
+            const card = document.createElement("div");
+            card.className = "hist-card";
+            card.innerHTML = `
+                <div class="hist-card-head">
+                    <div class="hist-card-title">Pedido ${row.pedido || "-"} · Parte ${row.parte || 1}</div>
+                    <input type="checkbox" data-row-id="${row.id}" class="hist-chk">
+                </div>
+                <div class="hist-card-row"><span class="muted">Canal</span><strong>${canalText}</strong></div>
+                <div class="hist-card-row">
+                    <span class="muted">Estado</span>
+                    <select data-status-id="${row.id}" style="max-width:180px;" ${isClosed ? "disabled" : ""}>
+                        <option ${row.estado === "Generada" ? "selected" : ""}>Generada</option>
+                        <option ${row.estado === "Enviada a almacen" ? "selected" : ""}>Enviada a almacen</option>
+                        <option ${row.estado === "Reimpresa" ? "selected" : ""}>Reimpresa</option>
+                        <option ${row.estado === "Archivada" ? "selected" : ""}>Archivada</option>
+                        <option ${row.estado === "Cancelacion solicitada" ? "selected" : ""}>Cancelacion solicitada</option>
+                        <option ${row.estado === "Cancelada" ? "selected" : ""}>Cancelada</option>
+                        <option ${row.estado === "Cancelacion negada" ? "selected" : ""}>Cancelacion negada</option>
+                    </select>
+                </div>
+                <div class="hist-card-row"><span class="muted">Archivo</span><span>${row.archivo_nombre || "-"}</span></div>
+                <div class="hist-card-row"><span class="muted">Rastreo</span>
+                    <span>${row.tracking_number || "-"}${row.tracking_number ? `<button class="copy-icon-btn" data-copy-track-id="${row.id}">${COPY_ICON}</button>` : ""}</span>
+                </div>
+                <div class="hist-card-row"><span class="muted">Costo</span>
+                    <span>${costoFmt}
+                    ${(row.tracking_number && row.costo_total != null && row.costo_total !== "")
+                        ? `<button class="copy-icon-btn" title="Copiar rastreo + costo (2 celdas)" data-copy-track-cost-id="${row.id}">${COPY_ICON}</button>`
+                        : ""}
+                    </span>
+                </div>
+                <div class="hist-card-row"><span class="muted">Fecha</span><span>${(row.created_at || "").replace("T", " ").slice(0, 16)}</span></div>
+                <div class="hist-card-actions">
+                    <div class="hist-mobile-menu-wrap">
+                        <button class="hist-mobile-menu-btn" onclick="toggleHistMenu(${row.id}, event)">⋮</button>
+                        <div id="histMenu-${row.id}" class="hist-mobile-menu hidden" onclick="event.stopPropagation()">
+                            <button class="btn btn-gray btn-small" data-download-id="${row.id}">Descargar</button>
+                            ${!isClosed && canalKey === "skydropx"
+                                ? `<button class="btn btn-warn btn-small" data-cancel-id="${row.id}">Cancelar guía</button>`
+                                : ""}
+                            ${!isClosed ? `<button class="btn btn-blue btn-small" data-archive-id="${row.id}">Archivar</button>` : ""}
+                            <button class="btn btn-red btn-small" data-delete-id="${row.id}">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            mobile.appendChild(card);
+        });
+        document.querySelectorAll("#histBody select[data-status-id], #histMobile select[data-status-id]").forEach((s) => {
+            s.addEventListener("change", async (e) => {
+                const id = Number(e.target.getAttribute("data-status-id"));
+                const estado = e.target.value;
+                await fetch("/actualizar-estado-guia", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, estado })
+                });
+            });
+        });
+        document.querySelectorAll("#histBody button[data-download-id], #histMobile button[data-download-id]").forEach((b) => {
+            b.addEventListener("click", async () => {
+                const id = Number(b.getAttribute("data-download-id"));
+                const row = historialRows.find((x) => x.id === id);
+                await descargarFila(row);
+            });
+        });
+        document.querySelectorAll("#histBody button[data-copy-track-id], #histMobile button[data-copy-track-id]").forEach((b) => {
+            b.addEventListener("click", async () => {
+                const id = Number(b.getAttribute("data-copy-track-id"));
+                const row = historialRows.find((x) => x.id === id);
+                if (!row?.tracking_number) return toast("No hay rastreo para copiar", "warn");
+                await copyText(row.tracking_number);
+                toast("Rastreo copiado", "ok");
+            });
+        });
+        document.querySelectorAll("#histBody button[data-copy-track-cost-id], #histMobile button[data-copy-track-cost-id]").forEach((b) => {
+            b.addEventListener("click", async () => {
+                const id = Number(b.getAttribute("data-copy-track-cost-id"));
+                const row = historialRows.find((x) => x.id === id);
+                if (!row || !row.tracking_number || row.costo_total == null || row.costo_total === "") {
+                    return toast("Faltan rastreo o costo para copiar", "warn");
+                }
+                const costo = Number(row.costo_total).toFixed(2);
+                await copyText(`${row.tracking_number}\t${costo}`);
+                toast("Rastreo y costo copiados (2 celdas)", "ok");
+            });
+        });
+        document.querySelectorAll("#histBody button[data-archive-id], #histMobile button[data-archive-id]").forEach((b) => {
+            b.addEventListener("click", async () => {
+                const id = Number(b.getAttribute("data-archive-id"));
+                const r = await fetch("/actualizar-estado-guia", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, estado: "Archivada" })
+                });
+                const data = await r.json().catch(() => ({}));
+                if (!r.ok) return toast(data.detail || "No se pudo archivar", "err");
+                const row = historialRows.find((x) => x.id === id);
+                if (row) row.estado = "Archivada";
+                closeHistMenus();
+                renderHistorial();
+                toast("Registro archivado", "ok");
+                await cargarHistorial();
+            });
+        });
+        document.querySelectorAll("#histBody button[data-cancel-id], #histMobile button[data-cancel-id]").forEach((b) => {
+            b.addEventListener("click", async () => {
+                const id = Number(b.getAttribute("data-cancel-id"));
+                const razon = "Paquetería o servicio no deseado";
+                if (!confirm(`Solicitar cancelación de guía con razón:\n"${razon}"?`)) return;
+                const r = await fetch("/cancelar-guia-skydropx", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, razon }),
+                });
+                const data = await r.json().catch(() => ({}));
+                if (!r.ok) {
+                    const msg = data.detail || "No se pudo cancelar";
+                    if (r.status === 422) toast("Cancelación negada por paquetería", "warn");
+                    else toast(msg, "err");
+                    return;
+                }
+                const estado = String(data.estado || "");
+                if (estado === "Cancelada") toast("Cancelación aprobada", "ok");
+                else if (estado === "Cancelacion negada") toast("Cancelación negada", "warn");
+                else toast("Cancelación solicitada", "ok");
+                await cargarHistorial();
+            });
+        });
+        document.querySelectorAll("#histBody button[data-delete-id], #histMobile button[data-delete-id]").forEach((b) => {
+            b.addEventListener("click", async () => {
+                const id = Number(b.getAttribute("data-delete-id"));
+                if (!confirm("¿Eliminar este registro del historial?")) return;
+                const r = await fetch("/eliminar-guia-historial", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id })
+                });
+                if (!r.ok) return toast("No se pudo eliminar", "err");
+                toast("Registro eliminado", "ok");
+                await cargarHistorial();
+            });
+        });
+    }
+
+    async function copyText(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+        }
+    }
+
+    async function descargarFila(row) {
+        if (!row) return;
+        if (isCFCanal(row.canal)) {
+            const f = row.archivo_ruta || row.archivo_nombre;
+            if (!f) return toast("No hay archivo local disponible.", "warn");
+            window.open("/descargar-pdf-local?filename=" + encodeURIComponent(f), "_blank");
+            return;
+        }
+        let labelUrl = row.label_url;
+        if (!labelUrl) {
+            toast("Reintentando obtener etiqueta...", "warn");
+            const r = await fetch("/resolver-label-historial?id=" + encodeURIComponent(row.id));
+            const data = await r.json().catch(() => ({}));
+            if (r.ok && data?.row) {
+                labelUrl = data.row.label_url || "";
+                Object.assign(row, data.row);
+            }
+        }
+        if (labelUrl) {
+            const q = new URLSearchParams({
+                url: String(labelUrl || ""),
+                filename: String(row.archivo_nombre || "guia-skydropx.pdf"),
+            });
+            window.open("/descargar-label-skydropx?" + q.toString(), "_blank");
+            return;
+        }
+        toast("No hay URL de descarga para esta guia.", "warn");
+    }
+
+    async function descargarSeleccionadas() {
+        const ids = Array.from(document.querySelectorAll(".hist-chk:checked"))
+            .map((x) => Number(x.getAttribute("data-row-id")));
+        if (ids.length === 0) return toast("Selecciona al menos una guia.", "warn");
+        for (const id of ids) {
+            const row = historialRows.find((x) => x.id === id);
+            await descargarFila(row);
+        }
+    }
+
+    function scheduleAutoPrevalidar() {
+        clearTimeout(prevalidarTimer);
+        if ($("canalSelect").value !== "skydropx") return;
+        prevalidarTimer = setTimeout(() => { prevalidarSkydropx({ silent: true }); }, 250);
+    }
+
+    function forceAutoPrevalidar() {
+        if ($("canalSelect").value !== "skydropx") return;
+        const raw = $("dataInput").value.trim();
+        if (!raw) return;
+        prevalidarSkydropx({ silent: true });
+    }
+
+    function onRawDataChanged() {
+        const raw = $("dataInput").value.trim();
+        if (!raw || $("canalSelect").value !== "skydropx") return;
+        if (raw === lastRawSnapshot) return;
+        lastRawSnapshot = raw;
+        clearPrecheckOverridesForNewRaw();
+        forceAutoPrevalidar();
+    }
+
+    function limpiarVerificador() {
+        clearPrecheckForm("Verificador limpiado.");
+        const raw = $("dataInput").value.trim();
+        if (raw && $("canalSelect").value === "skydropx") {
+            forceAutoPrevalidar();
+        }
+        toast("Verificador limpiado", "ok");
+    }
+
+    function limpiezaGeneral() {
+        if (!confirm("¿Limpiar captura, configuración y verificador?")) return;
+        $("dataInput").value = "";
+        $("notasInput").value = "";
+        $("pedidoInput").value = "";
+        $("partesInput").value = 1;
+        $("diagSkydropxOut").textContent = "";
+        setOpStatus("");
+        lastRawSnapshot = "";
+        clearPrecheckForm("Pendiente de validar.");
+        syncPartsCount(false);
+        renderParts();
+        $("histPedidoFiltro").value = "";
+        if ($("histEstadoFiltro")) $("histEstadoFiltro").value = "activos";
+        cargarHistorial();
+        toast("Limpieza general aplicada", "ok");
+    }
+
+    function init() {
+        ensureDefaultPresets();
+        renderPresetOptions();
+        initCanalToggle();
+        document.addEventListener("click", () => { closePresetMenus(); closeHistMenus(); });
+        // Orden visual: primero validación de dirección y luego configuración del pedido.
+        const precheck = $("precheckSection");
+        const config = $("configSection");
+        if (precheck && config && precheck.nextElementSibling !== config) {
+            precheck.insertAdjacentElement("afterend", config);
+        }
+        $("chkAllHist").addEventListener("change", (e) => {
+            document.querySelectorAll(".hist-chk").forEach((c) => { c.checked = e.target.checked; });
+        });
+        $("partesInput").addEventListener("input", () => {
+            syncPartsCount(true);
+            renderParts();
+        });
+        $("dataInput").addEventListener("input", () => {
+            autollenarPedidoDesdeRaw();
+            onRawDataChanged();
+            scheduleAutoPrevalidar();
+        });
+        $("dataInput").addEventListener("paste", () => {
+            setTimeout(() => {
+                autollenarPedidoDesdeRaw();
+                onRawDataChanged();
+                forceAutoPrevalidar();
+            }, 150);
+        });
+        $("dataInput").addEventListener("blur", () => {
+            onRawDataChanged();
+            forceAutoPrevalidar();
+        });
+        ["pvStreetRaw","pvStreet1","pvReference","pvPostal","pvPhone","pvState","pvCity","pvColony","pvName","pvEmail"].forEach((id) => {
+            $(id).addEventListener("input", () => {
+                precheckData = null;
+                $("precheckStatus").innerHTML = '<span class="muted">Pendiente de revalidar.</span>';
+            });
+        });
+        $("canalSelect").addEventListener("change", () => {
+            renderParts();
+            refreshUIVisibility();
+            scheduleAutoPrevalidar();
+            forceAutoPrevalidar();
+        });
+        crearPartes();
+        refreshUIVisibility();
+        forceAutoPrevalidar();
+        cargarHistorial();
+    }
+
+    function refreshUIVisibility() {
+        const canal = $("canalSelect").value;
+        const isSky = canal === "skydropx";
+        const precheck = $("precheckSection");
+        precheck.classList.toggle("hidden", !isSky);
+        $("configSection").classList.toggle("hidden", !isSky);
+        $("partsSection").classList.toggle("hidden", !isSky);
+        $("notasWrap").classList.toggle("hidden", isSky ? true : false);
+        $("cfDirectBtn").classList.toggle("hidden", isSky);
+        $("diagBtnTop").classList.toggle("hidden", !isSky);
+        document.querySelectorAll(".quote-col").forEach((el) => {
+            el.classList.toggle("hidden", !isSky);
+        });
+        document.querySelectorAll("#canalToggle .canal-btn").forEach((btn) => {
+            btn.classList.toggle("active", btn.getAttribute("data-canal") === canal);
+        });
+        if (isSky) forceAutoPrevalidar();
+    }
+
+    function initCanalToggle() {
+        document.querySelectorAll("#canalToggle .canal-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const canal = btn.getAttribute("data-canal");
+                $("canalSelect").value = canal;
+                $("canalSelect").dispatchEvent(new Event("change"));
+            });
+        });
+    }
+
+    init();
+</script>
+</body>
+</html>

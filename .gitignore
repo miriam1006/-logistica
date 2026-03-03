@@ -1,0 +1,12 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Archivos pesados/de prueba
+*.pdf
+
+# Python
+.venv/
+__pycache__/
+*.pyc
