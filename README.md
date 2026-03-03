@@ -1,58 +1,150 @@
-🚚 Logística Inteligente - Generador de Guías
-Sistema automatizado de gestión logística diseñado para agilizar el despacho de mercancías mediante la integración de transportistas privados y servicios de paquetería externos (Skydropx).
+🚚 Logística Inteligente – Generador Automatizado de Guías
+
+Sistema web desarrollado para automatizar la generación de guías de envío, integrando transportistas privados y servicios de paquetería externos como Skydropx.
+
+El objetivo principal es reducir la carga operativa manual en procesos logísticos mediante automatización, validación de datos y trazabilidad centralizada.
+
+🎯 Problema que Resuelve
+
+En operaciones logísticas tradicionales, la generación de guías implica:
+
+Copiar y pegar información manualmente
+
+Validar campos de envío uno por uno
+
+Generar guías en múltiples plataformas
+
+Falta de trazabilidad estructurada
+
+Este sistema transforma información en bruto en guías listas para impresión en cuestión de segundos, minimizando errores humanos y tiempos de operación.
 
 🚀 Impacto del Proyecto
-Este sistema elimina la carga operativa manual al procesar datos de envío en bruto y transformarlos automáticamente en guías listas para impresión.
 
-Automatización: Identificación inteligente de campos y mapeo de datos para generación de guías sin intervención manual.
+⚡ Reducción de tiempo operativo en generación de guías
 
-Omnicanalidad: Gestión centralizada de guías internas (transportistas privados) y guías de mercado (Skydropx).
+🤖 Automatización del mapeo de datos sin intervención manual
 
-Trazabilidad: Registro en tiempo real de cada transacción para auditoría y control de entregas.
+📦 Gestión omnicanal (transportistas privados + Skydropx)
+
+📊 Trazabilidad en tiempo real para auditoría y control
 
 🛠️ Stack Tecnológico
+
 Lenguaje: Python 3.10+
 
-Backend Framework: Flask (vía app.py)
+Framework Backend: Flask
 
-Base de Datos: Supabase / PostgreSQL (Persistencia y logs)
+Base de Datos: PostgreSQL (Supabase)
 
-Integraciones: Skydropx API
+Integraciones externas: API de Skydropx
 
-Frontend: HTML5 / Tailwind CSS (Interfaz responsiva)
+Frontend: HTML5 + Tailwind CSS
 
-📦 Funcionalidades Clave
-Procesamiento Inteligente: Algoritmo que identifica automáticamente campos relevantes desde información copiada, reduciendo errores humanos.
+Arquitectura: Modular orientada a separación de responsabilidades
 
-Cliente de API Robusto: Integración personalizada con Skydropx para cotización y generación de guías.
+🧠 Funcionalidades Clave
+🔎 Procesamiento Inteligente de Datos
 
-Historial Operativo: Panel integrado para consulta de resultados y estatus de guías generadas directamente en la interfaz.
+Algoritmo que identifica automáticamente campos relevantes desde texto copiado en bruto (nombre, dirección, teléfono, referencias, etc.), reduciendo errores humanos y mejorando la eficiencia operativa.
 
-Escalabilidad: Esquema SQL diseñado para soportar altos volúmenes de registros y consultas rápidas.
+🔌 Integración con API de Skydropx
 
-📂 Estructura del Proyecto
-app.py: Punto de entrada de la aplicación web y gestión de rutas.
+Cliente personalizado para:
 
-generador_guias.py: Núcleo de la lógica de negocio y procesamiento de datos.
+Cotización de envíos
 
-skydropx_client.py: Módulo especializado para la comunicación con la API de envíos.
+Generación de guías
 
-supabase_guias_generadas.sql: Definición del esquema de datos para PostgreSQL.
+Manejo estructurado de respuestas y errores
 
-static/: Interfaz de usuario (UI) para el operador logístico.
+📜 Historial Operativo
 
-🔧 Configuración
-Clonar repositorio:
+Panel interno que permite:
 
-Bash
+Consultar guías generadas
+
+Revisar estatus
+
+Auditar transacciones
+
+📈 Escalabilidad
+
+Diseño de esquema SQL optimizado para:
+
+Altos volúmenes de registros
+
+Consultas rápidas
+
+Registro estructurado de logs
+
+🏗️ Arquitectura del Proyecto
+├── app.py                    # Punto de entrada y gestión de rutas
+├── generador_guias.py        # Lógica de negocio y procesamiento inteligente
+├── skydropx_client.py        # Cliente para integración con API externa
+├── supabase_guias_generadas.sql  # Esquema de base de datos
+├── static/                   # Interfaz de usuario
+└── templates/                # Vistas HTML
+
+El diseño modular facilita mantenimiento, pruebas y escalabilidad futura.
+
+⚙️ Instalación y Configuración
+1️⃣ Clonar el repositorio
 git clone https://github.com/miriam1006/-logistica.git
 cd -logistica
-Entorno Virtual:
-
-Bash
+2️⃣ Crear entorno virtual
 python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-.venv\Scripts\activate     # Windows
+
+Activar entorno:
+
+Linux / Mac:
+
+source .venv/bin/activate
+
+Windows:
+
+.venv\Scripts\activate
+
+Instalar dependencias:
+
 pip install -r requirements.txt
-Variables de Entorno:
-Renombrar .env.example a .env y configurar tus credenciales de Supabase y Skydropx.
+3️⃣ Variables de Entorno
+
+Renombrar:
+
+.env.example → .env
+
+Configurar:
+
+Credenciales de Supabase
+
+API Key de Skydropx
+
+Variables de entorno necesarias para ejecución
+
+🔮 Posibles Mejoras Futuras
+
+Autenticación y roles de usuario
+
+Dashboard con métricas operativas
+
+Manejo de múltiples APIs de paquetería
+
+Implementación de pruebas unitarias
+
+Dockerización para despliegue
+
+👩‍💻 Sobre el Proyecto
+
+Este proyecto refleja mi enfoque hacia:
+
+Automatización de procesos
+
+Integración de APIs externas
+
+Diseño backend modular
+
+Persistencia y trazabilidad de datos
+
+Optimización operativa mediante software
+
+Desarrollado como parte de mi transición hacia ingeniería de software con enfoque en backend y soluciones de automatización.
